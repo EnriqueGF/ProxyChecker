@@ -22,6 +22,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class Main {
 
+    private static Scanner scanner;
     private static String proxiesPath;
     private static String workingProxiesPath;
     private static String testingURL;
@@ -31,12 +32,13 @@ public class Main {
     public static void main(String[] args) {
 
         disableApacheLogging();
-
-        Scanner scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
+        
         System.out.println("Introduce your proxy list path. Note that the proxy list must be have one proxy per line. Example: C:\\proxylist.txt");
-        proxiesPath = scanner.nextLine();
+        proxiesPath = requestFilePath();
+
         System.out.println("Introduce path of the file to save the results. Example: C:\\workingproxysresults.txt");
-        workingProxiesPath = scanner.nextLine();
+        workingProxiesPath = requestFilePath();
         System.out.println("Introduce an URL for testing purposes. Example: https://google.es");
         testingURL = scanner.nextLine();
         System.out.println("Press any key to start.");
@@ -49,6 +51,22 @@ public class Main {
             thread.start();
         });
 
+    }
+
+    private static String requestFilePath() {
+        boolean valid = false;
+        File file = new File(scanner.nextLine());
+        while (!valid) {
+            if (file.exists()) {
+                valid = true;
+            } else {
+                System.out.println("File not found. Enter again.");
+                file = new File(scanner.nextLine());
+            }
+
+        }
+
+        return file.getPath();
     }
 
     private static void processProxyList() {
